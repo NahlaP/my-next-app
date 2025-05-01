@@ -1,4 +1,5 @@
 
+// // // export default LoginPage;
 
 // "use client";
 
@@ -8,6 +9,7 @@
 // import { AppDispatch } from "../store";
 // import { useRouter } from "next/navigation";
 // import { toast } from "sonner";
+// import axios from "axios";
 
 // const LoginPage = () => {
 //   const dispatch = useDispatch<AppDispatch>();
@@ -15,27 +17,35 @@
 
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
 
-//   const handleLogin = (e: React.FormEvent) => {
+//   const handleLogin = async (e: React.FormEvent) => {
 //     e.preventDefault();
 
-//     const storedUser = localStorage.getItem("user");
+//     setLoading(true);
 
-//     if (!storedUser) {
-//       toast.error("No user found. Please sign up first.");
-//       return;
-//     }
+//     try {
+//       const response = await axios.post("http://localhost:5000/api/auth/login", {
+//         email,
+//         password,
+//       });
 
-//     const parsedUser = JSON.parse(storedUser);
+//       const { token, user } = response.data;
 
-//     if (parsedUser.email === email && parsedUser.password === password) {
-//       dispatch(loginSuccess({ name: parsedUser.name, email: parsedUser.email }));
-//       toast.success("Login successful");
+//       // Save the token to localStorage
+//       localStorage.setItem("token", token);
 
+//       // Save user info to Redux store
+//       dispatch(loginSuccess({ name: user.name, email: user.email }));
+
+//       toast.success("Login successful!");
+
+//       // Redirect to homepage
 //       setTimeout(() => {
-//         router.push("/homePage");
+//         router.push("/homepage");
 //       }, 100);
-//     } else {
+//     } catch {
+//       setLoading(false);
 //       toast.error("Invalid credentials");
 //     }
 //   };
@@ -46,9 +56,7 @@
 //         onSubmit={handleLogin}
 //         className="bg-white p-6 rounded shadow-md w-full max-w-sm"
 //       >
-//         <h2 className="text-2xl mb-4 font-bold text-center text-gray-800">
-//           Login
-//         </h2>
+//         <h2 className="text-2xl mb-4 font-bold text-center text-gray-800">Login</h2>
 
 //         <input
 //           type="email"
@@ -71,8 +79,9 @@
 //         <button
 //           type="submit"
 //           className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+//           disabled={loading}
 //         >
-//           Login
+//           {loading ? "Logging in..." : "Login"}
 //         </button>
 
 //         <p className="mt-4 text-center">
@@ -89,7 +98,8 @@
 //   );
 // };
 
-// // export default LoginPage;
+// export default LoginPage;
+
 
 "use client";
 
@@ -108,38 +118,65 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
-
+  
+    // try {
+    //   const response = await axios.post("http://localhost:5000/api/auth/login", {
+    //     email,
+    //     password,
+    //   });
+  
+    //   const { token, user } = response.data;
+  
+    //   localStorage.setItem("token", token);
+  
+    //   // Save complete user info including isAdmin to Redux
+    //   dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin }));
+  
+    //   toast.success("Login successful!");
+  
+    //   // ✅ Redirect based on admin status
+    //   if (user.isAdmin) {
+    //     router.push("/admin/dashboard");
+    //   } else {
+    //     router.push("/homepage");
+    //   }
+    // } catch {
+    //   setLoading(false);
+    //   toast.error("Invalid credentials");
+    // }
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
-
+    
       const { token, user } = response.data;
+      console.log("User from login:", user);
+console.log("Type of isAdmin:", typeof user.isAdmin, "Value:", user.isAdmin);
 
-      // Save the token to localStorage
+    
+      console.log("Logged-in user:", user); // ✅ DEBUG LINE
+    
       localStorage.setItem("token", token);
-
-      // Save user info to Redux store
-      dispatch(loginSuccess({ name: user.name, email: user.email }));
-
+      dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin }));
       toast.success("Login successful!");
-
-      // Redirect to homepage
-      setTimeout(() => {
+    
+      // ✅ Check redirect
+      if (user.isAdmin) {
+        router.push("/admin");
+      } else {
         router.push("/homepage");
-      }, 100);
+      }
     } catch {
       setLoading(false);
       toast.error("Invalid credentials");
     }
+    
   };
-
+  
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form

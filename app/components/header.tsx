@@ -1,4 +1,5 @@
 
+
 // "use client";
 
 // import React from "react";
@@ -19,12 +20,18 @@
 //   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
 //   const handleLogout = () => {
+//     // Clear localStorage if using token there
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("user");
+
+//     // Dispatch Redux logout
 //     dispatch(logout());
+
 //     toast.success("Logout successful");
 
-//     // Wait a moment before redirecting so Redux can update
+//     // Redirect after short delay
 //     setTimeout(() => {
-//       router.push("/"); // Redirect to ProductRender page
+//       router.push("/");
 //     }, 100);
 //   };
 
@@ -61,13 +68,13 @@
 //         <Link href="/cart">
 //           <HiOutlineShoppingBag className="cursor-pointer hover:text-green-500 transition duration-300" />
 //         </Link>
+        
 //       </div>
 //     </header>
 //   );
 // };
 
 // export default Header;
-
 "use client";
 
 import React from "react";
@@ -85,7 +92,7 @@ import { toast } from "sonner";
 const Header = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
     // Clear localStorage if using token there
@@ -130,13 +137,21 @@ const Header = () => {
           </Link>
         )}
 
+        {user?.isAdmin && (
+          <Link
+            href="/admin"
+            className="text-sm bg-blue-100 hover:bg-blue-300 text-blue-800 py-1 px-3 rounded-md"
+          >
+            Admin Dashboard
+          </Link>
+        )}
+
         <Link href="#">
           <FiHeart className="cursor-pointer hover:text-red-500 transition duration-300" />
         </Link>
         <Link href="/cart">
           <HiOutlineShoppingBag className="cursor-pointer hover:text-green-500 transition duration-300" />
         </Link>
-        
       </div>
     </header>
   );
