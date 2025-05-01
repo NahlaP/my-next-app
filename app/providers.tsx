@@ -2,7 +2,7 @@
 "use client";
 
 import { Provider } from "react-redux";
-import { store, persistor } from "@/app/store/store";
+import { store, persistor } from "./store/store";
 
 import { PersistGate } from "redux-persist/integration/react";
 

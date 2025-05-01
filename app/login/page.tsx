@@ -1,42 +1,55 @@
-// // app/login/page.tsx
+
+
 // "use client";
 
-// import React, { useState } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { RootState } from '../store';
-// import { loginSuccess } from '../store/authSlice';
-// import { useRouter, useSearchParams } from 'next/navigation';
+// import React, { useState } from "react";
+// import { useDispatch } from "react-redux";
+// import { loginSuccess } from "../store/authSlice";
+// import { AppDispatch } from "../store";
+// import { useRouter } from "next/navigation";
+// import { toast } from "sonner";
 
 // const LoginPage = () => {
-//   const dispatch = useDispatch();
+//   const dispatch = useDispatch<AppDispatch>();
 //   const router = useRouter();
-//   const searchParams = useSearchParams();
-  
-//   // Access the current user data from Redux state
-//   const user = useSelector((state: RootState) => state.auth.user);
 
-//   // Local state for email and password
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
 
 //   const handleLogin = (e: React.FormEvent) => {
 //     e.preventDefault();
 
-//     // Check if user exists and the credentials match
-//     if (user && email === user.email && password === user.password) {
-//       dispatch(loginSuccess({ name: user.name, email: user.email }));
-//       const redirectTo = searchParams.get('redirectTo') || '/homePage'; // Redirect after login
-//       router.push(redirectTo); // Navigate to the target page or home
+//     const storedUser = localStorage.getItem("user");
+
+//     if (!storedUser) {
+//       toast.error("No user found. Please sign up first.");
+//       return;
+//     }
+
+//     const parsedUser = JSON.parse(storedUser);
+
+//     if (parsedUser.email === email && parsedUser.password === password) {
+//       dispatch(loginSuccess({ name: parsedUser.name, email: parsedUser.email }));
+//       toast.success("Login successful");
+
+//       setTimeout(() => {
+//         router.push("/homePage");
+//       }, 100);
 //     } else {
-//       alert('Invalid credentials'); // Show error if login fails
+//       toast.error("Invalid credentials");
 //     }
 //   };
 
 //   return (
 //     <div className="flex justify-center items-center h-screen bg-gray-100">
-//       <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-80">
-//         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        
+//       <form
+//         onSubmit={handleLogin}
+//         className="bg-white p-6 rounded shadow-md w-full max-w-sm"
+//       >
+//         <h2 className="text-2xl mb-4 font-bold text-center text-gray-800">
+//           Login
+//         </h2>
+
 //         <input
 //           type="email"
 //           placeholder="Email"
@@ -45,7 +58,7 @@
 //           onChange={(e) => setEmail(e.target.value)}
 //           required
 //         />
-        
+
 //         <input
 //           type="password"
 //           placeholder="Password"
@@ -54,14 +67,14 @@
 //           onChange={(e) => setPassword(e.target.value)}
 //           required
 //         />
-        
+
 //         <button
 //           type="submit"
-//           className="w-full bg-red-800 text-white py-2 rounded hover:bg-red-700"
+//           className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
 //         >
 //           Login
 //         </button>
-        
+
 //         <p className="mt-4 text-center">
 //           <span className="text-sm text-gray-600">Don&apos;t have an account?</span>
 //           <a
@@ -85,6 +98,7 @@ import { loginSuccess } from "../store/authSlice";
 import { AppDispatch } from "../store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import axios from "axios";
 
 const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -92,27 +106,35 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const storedUser = localStorage.getItem("user");
+    setLoading(true);
 
-    if (!storedUser) {
-      toast.error("No user found. Please sign up first.");
-      return;
-    }
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
 
-    const parsedUser = JSON.parse(storedUser);
+      const { token, user } = response.data;
 
-    if (parsedUser.email === email && parsedUser.password === password) {
-      dispatch(loginSuccess({ name: parsedUser.name, email: parsedUser.email }));
-      toast.success("Login successful");
+      // Save the token to localStorage
+      localStorage.setItem("token", token);
 
+      // Save user info to Redux store
+      dispatch(loginSuccess({ name: user.name, email: user.email }));
+
+      toast.success("Login successful!");
+
+      // Redirect to homepage
       setTimeout(() => {
-        router.push("/homePage");
+        router.push("/homepage");
       }, 100);
-    } else {
+    } catch (err: any) {
+      setLoading(false);
       toast.error("Invalid credentials");
     }
   };
@@ -123,9 +145,7 @@ const LoginPage = () => {
         onSubmit={handleLogin}
         className="bg-white p-6 rounded shadow-md w-full max-w-sm"
       >
-        <h2 className="text-2xl mb-4 font-bold text-center text-gray-800">
-          Login
-        </h2>
+        <h2 className="text-2xl mb-4 font-bold text-center text-gray-800">Login</h2>
 
         <input
           type="email"
@@ -148,8 +168,9 @@ const LoginPage = () => {
         <button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <p className="mt-4 text-center">
