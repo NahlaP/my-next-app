@@ -139,7 +139,12 @@ const SignupPage = () => {
       setTimeout(() => {
         router.push("/login");
       }, 200);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        toast.error(err.response?.data?.message || "Signup failed. Please try again.");
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
       setLoading(false);
       toast.error("Signup failed. Please try again.");
     }

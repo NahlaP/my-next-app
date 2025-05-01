@@ -5,7 +5,7 @@
 // import { BiUser } from "react-icons/bi";
 // import { FiHeart } from "react-icons/fi";
 // import { HiOutlineShoppingBag } from "react-icons/hi";
-// import Image from 'next/image';
+// import Image from "next/image";
 // import Link from "next/link";
 // import { useRouter } from "next/navigation";
 // import { useDispatch, useSelector } from "react-redux";
@@ -16,13 +16,16 @@
 // const Header = () => {
 //   const router = useRouter();
 //   const dispatch = useDispatch<AppDispatch>();
-
 //   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
 //   const handleLogout = () => {
 //     dispatch(logout());
-//     toast.success('Logout successful');
-//     router.push('/'); // Redirect to homepage (ProductRender)
+//     toast.success("Logout successful");
+
+//     // Wait a moment before redirecting so Redux can update
+//     setTimeout(() => {
+//       router.push("/"); // Redirect to ProductRender page
+//     }, 100);
 //   };
 
 //   return (
@@ -35,12 +38,10 @@
 //           height={40}
 //           className="object-contain"
 //         />
-//         <div className="text-2xl font-bold text-gray-800">
-//           Store
-//         </div>
+//         <div className="text-2xl font-bold text-gray-800">Store</div>
 //       </div>
 
-//       <div className="flex items-center space-x-6 text-l text-gray-700">
+//       <div className="flex items-center space-x-6 text-lg text-gray-700">
 //         {isAuthenticated ? (
 //           <button
 //             onClick={handleLogout}
@@ -66,6 +67,7 @@
 // };
 
 // export default Header;
+
 "use client";
 
 import React from "react";
@@ -86,12 +88,18 @@ const Header = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const handleLogout = () => {
+    // Clear localStorage if using token there
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // Dispatch Redux logout
     dispatch(logout());
+
     toast.success("Logout successful");
 
-    // Wait a moment before redirecting so Redux can update
+    // Redirect after short delay
     setTimeout(() => {
-      router.push("/"); // Redirect to ProductRender page
+      router.push("/");
     }, 100);
   };
 
@@ -128,6 +136,7 @@ const Header = () => {
         <Link href="/cart">
           <HiOutlineShoppingBag className="cursor-pointer hover:text-green-500 transition duration-300" />
         </Link>
+        
       </div>
     </header>
   );

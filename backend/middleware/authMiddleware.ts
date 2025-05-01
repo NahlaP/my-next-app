@@ -15,7 +15,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;  // Attach user data to the request object
     next();
-  } catch (err) {
+  } catch {
     res.status(400).json({ message: 'Invalid token.' });
   }
 };

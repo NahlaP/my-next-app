@@ -89,7 +89,8 @@
 //   );
 // };
 
-// export default LoginPage;
+// // export default LoginPage;
+
 "use client";
 
 import React, { useState } from "react";
@@ -133,7 +134,7 @@ const LoginPage = () => {
       setTimeout(() => {
         router.push("/homepage");
       }, 100);
-    } catch (err: any) {
+    } catch {
       setLoading(false);
       toast.error("Invalid credentials");
     }

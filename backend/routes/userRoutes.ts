@@ -9,7 +9,11 @@ const router = express.Router();
 router.get('/profile', verifyToken, async (req, res): Promise<void> => {
 
   try {
-    const userId = (req.user as any).id; // safely access user ID from JWT
+    interface AuthenticatedRequest extends express.Request {
+        user?: { id: string };
+    }
+
+    const userId = (req as AuthenticatedRequest).user?.id; // safely access user ID from JWT
     const user = await User.findById(userId).select('-password');
 
     if (!user) {
