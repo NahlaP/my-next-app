@@ -1,49 +1,3 @@
-// // store/productSlice.ts
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// interface Product {
-//   id: number;
-//   name: string;
-//   description: string;
-//   price: number;
-//   imageUrl: string;
-// }
-
-// interface ProductState {
-//   products: Product[];
-// }
-
-// const initialState: ProductState = {
-//   products: [
-//     {
-//       id: 1,
-//       name: "Product A",
-//       description: "This is the description of Product A.",
-//       price: 49.99,
-//       imageUrl: "https://via.placeholder.com/150",
-//     },
-//     {
-//       id: 2,
-//       name: "Product B",
-//       description: "This is the description of Product B.",
-//       price: 79.99,
-//       imageUrl: "https://via.placeholder.com/150",
-//     },
-//   ],
-// };
-
-// const productSlice = createSlice({
-//   name: "product",
-//   initialState,
-//   reducers: {
-//     addProduct: (state, action: PayloadAction<Product>) => {
-//       state.products.push(action.payload);
-//     },
-//   },
-// });
-
-// export const { addProduct } = productSlice.actions;
-// export default productSlice.reducer;  
 
 
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
@@ -76,7 +30,7 @@ const initialState: ProductState = {
   error: null,
 };
 
-// ✅ Async thunk to fetch products
+
 export const fetchProducts = createAsyncThunk("product/fetchProducts", async () => {
   const response = await axios.get("/api/products"); // Replace with your actual API endpoint
   return response.data;

@@ -17,6 +17,7 @@
   
 // Basic product without quantity
 export interface BaseProduct {
+  _id?: string;
   name: string;
 
   slug: string;
