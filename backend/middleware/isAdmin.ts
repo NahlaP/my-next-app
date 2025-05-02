@@ -1,11 +1,20 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const user = req.user as { isAdmin?: boolean };
-
-  if (user && user.isAdmin) {
+  if (typeof req.user === 'object' && 'isAdmin' in req.user && req.user.isAdmin) {
     next();
   } else {
-    res.status(403).json({ message: "Admin access only" });
+    res.status(403).json({ message: 'Admin access only' });
   }
 };
+// import { Request, Response, NextFunction } from 'express';
+
+
+// export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+//     if (req.user?.isAdmin) {
+//       next();
+//     } else {
+//       res.status(403).json({ message: 'Admin access only' });
+//     }
+//   };
+  

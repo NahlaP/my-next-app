@@ -14,66 +14,88 @@
 // }, { timestamps: true });
 
 // export default mongoose.model('Product', productSchema);
-import mongoose, { Schema, Document } from "mongoose";
+// import mongoose, { Schema, Document } from "mongoose";
 
-export interface IProduct extends Document {
-  name: string;
-  slug: string;
-  category: string;
-  brand: string;
-  description: string;
-  price: number;
-  stock: number;
-  images: string[];
-  isFeatured: boolean;
-}
+// export interface IProduct extends Document {
+//   name: string;
+//   slug: string;
+//   category: string;
+//   brand: string;
+//   description: string;
+//   price: number;
+//   stock: number;
+//   images: string[];
+//   isFeatured: boolean;
+// }
 
-const ProductSchema: Schema = new Schema<IProduct>(
+// const ProductSchema: Schema = new Schema<IProduct>(
+//   {
+//     name: {
+//       type: String,
+//       required: true,
+//       trim: true,
+//     },
+//     slug: {
+//       type: String,
+//       required: true,
+//       unique: true,
+//       lowercase: true,
+//       trim: true,
+//     },
+//     category: {
+//       type: String,
+//       required: true,
+//     },
+//     brand: {
+//       type: String,
+//       required: true,
+//     },
+//     description: {
+//       type: String,
+//       required: true,
+//     },
+//     price: {
+//       type: Number,
+//       required: true,
+//     },
+//     stock: {
+//       type: Number,
+//       required: true,
+//     },
+//     images: {
+//       type: [String],
+//       required: true,
+//     },
+//     isFeatured: {
+//       type: Boolean,
+//       default: false,
+//     },
+//   },
+//   { timestamps: true }
+// );
+
+// const Product = mongoose.model<IProduct>("Product", ProductSchema);
+
+// export default Product;
+import mongoose from 'mongoose';
+
+const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    category: {
-      type: String,
-      required: true,
-    },
-    brand: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-    },
-    images: {
-      type: [String],
-      required: true,
-    },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-    },
+    name: String,
+    slug: { type: String, unique: true },
+    category: String,
+    description: String,
+    images: [String],
+    price: Number,
+    brand: String,
+    rating: Number,
+    numReviews: Number,
+    stock: Number,
+    isFeatured: Boolean,
+    banner: String,
   },
   { timestamps: true }
 );
 
-const Product = mongoose.model<IProduct>("Product", ProductSchema);
-
+const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 export default Product;
