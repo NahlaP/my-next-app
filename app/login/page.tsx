@@ -21,32 +21,7 @@ const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-  
-    // try {
-    //   const response = await axios.post("http://localhost:5000/api/auth/login", {
-    //     email,
-    //     password,
-    //   });
-  
-    //   const { token, user } = response.data;
-  
-    //   localStorage.setItem("token", token);
-  
-    //   // Save complete user info including isAdmin to Redux
-    //   dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin }));
-  
-    //   toast.success("Login successful!");
-  
-    //   // ✅ Redirect based on admin status
-    //   if (user.isAdmin) {
-    //     router.push("/admin/dashboard");
-    //   } else {
-    //     router.push("/homepage");
-    //   }
-    // } catch {
-    //   setLoading(false);
-    //   toast.error("Invalid credentials");
-    // }
+
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", {
         email,
@@ -58,13 +33,13 @@ const LoginPage = () => {
 console.log("Type of isAdmin:", typeof user.isAdmin, "Value:", user.isAdmin);
 
     
-      console.log("Logged-in user:", user); // ✅ DEBUG LINE
+      console.log("Logged-in user:", user); 
     
       localStorage.setItem("token", token);
       dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin }));
       toast.success("Login successful!");
     
-      // ✅ Check redirect
+  
       if (user.isAdmin) {
         router.push("/admin/dashboard");
       } else {

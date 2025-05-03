@@ -10,8 +10,8 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Mock forgot password (replace with real API)
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // simulate network delay
+   
+    await new Promise((resolve) => setTimeout(resolve, 1000)); 
     alert(`Reset link sent to ${email}`);
     
     setLoading(false);

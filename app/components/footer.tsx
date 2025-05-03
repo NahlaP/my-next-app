@@ -56,7 +56,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Customer Service */}
+       
           <div>
             <h4 className="text-lg font-semibold mb-4">Customer Service</h4>
             <ul className="space-y-2">
@@ -83,7 +83,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
+     
           <div>
             <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
             <p className="text-gray-900 mb-4">
@@ -106,7 +106,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-900 text-sm">
             &copy; {new Date().getFullYear()} Store. All rights reserved.

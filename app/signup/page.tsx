@@ -32,15 +32,14 @@ const SignupPage = () => {
 
       const { token, user } = response.data;
 
-      // Save the token to localStorage
+   
       localStorage.setItem("token", token);
 
-      // Save user info to Redux store
+  
       dispatch(signup(user));
 
       toast.success("Signup successful!");
 
-      // Redirect to login page after signup
       setTimeout(() => {
         router.push("/login");
       }, 200);

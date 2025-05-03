@@ -25,7 +25,7 @@ const createNoopStorage = () => {
 const storage =
   typeof window !== "undefined"
     ? createWebStorage("local")
-    : createNoopStorage(); // use noop on server
+    : createNoopStorage(); 
 
 const rootReducer = combineReducers({
   auth: authReducer,

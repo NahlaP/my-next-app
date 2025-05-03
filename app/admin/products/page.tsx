@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -28,7 +29,7 @@ const AdminProducts = () => {
     try {
       await axios.delete(`http://localhost:5000/api/products/${id}`);
       toast.success("Product deleted");
-      fetchProducts(); // Refresh list
+      fetchProducts(); 
     } catch {
       toast.error("Error deleting product");
     }
@@ -42,12 +43,12 @@ const AdminProducts = () => {
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Manage Products</h2>
-        <a
+        <Link
           href="/admin/products/create"
           className="bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2 rounded-md transition-colors"
         >
           + Add Product
-        </a>
+        </Link>
       </div>
 
       {products.length === 0 ? (

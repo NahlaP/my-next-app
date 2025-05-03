@@ -1,4 +1,4 @@
-// components/PrivateRoute.tsx
+
 "use client";
 
 import React, { ReactNode, useState, useEffect } from 'react';
@@ -19,7 +19,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     if (!user) {
       router.push('/login');
     } else {
-      setLoading(false); // Set loading to false once the user is authenticated
+      setLoading(false); 
     }
   }, [user, router]);
 
@@ -31,7 +31,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>; // Render protected content when authenticated
+  return <>{children}</>; 
 };
 
 export default PrivateRoute;
