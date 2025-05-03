@@ -98,37 +98,35 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
     await User.create({
       name,
       email,
       password: hashedPassword,
-      isAdmin: isAdmin || false, // Default to false if not provided
+      isAdmin: isAdmin || false, 
     });
 
-    // Send response
+  
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error('Error during login:', err.stack);
 
-      // Send error response
+   
       res.status(500).json({ message: 'Login failed', error: err.message });
     } else {
       console.error('Unexpected error:', err);
       res.status(500).json({ message: 'Login failed', error: 'Unexpected error occurred' });
     }
-    // Log the full error stack for debugging
+  
     if (err instanceof Error) {
       console.error('Error during registration:', err.stack);
     } else {
       console.error('Unexpected error during registration:', err);
     }
 
-    // Send error response
+
     res.status(500).json({ 
       message: 'Registration failed', 
       error: err instanceof Error ? err.message : 'Unexpected error occurred' 
@@ -136,25 +134,24 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Login Handler
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
-  // Basic validation for email and password
+
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     res.status(400).json({ message: 'Invalid email or password' });
     return;
   }
 
   try {
-    // Find the user by email
+ 
     const user = await User.findOne({ email });
     if (!user) {
       res.status(400).json({ message: 'Invalid credentials' });
       return;
     }
 
-    // Compare entered password with the stored hash
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       res.status(400).json({ message: 'Invalid credentials' });
