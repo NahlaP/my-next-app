@@ -139,7 +139,7 @@ const Header = () => {
 
         {user?.isAdmin && (
           <Link
-            href="/admin"
+            href="/admin/dashboard"
             className="text-sm bg-blue-100 hover:bg-blue-300 text-blue-800 py-1 px-3 rounded-md"
           >
             Admin Dashboard

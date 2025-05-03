@@ -1,19 +1,22 @@
+
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/app/store";
-import ProductList from "../components/productList";
 import Image from "next/image";
 import Link from "next/link"; 
 import { toast } from "sonner";
 import { addToCart } from "@/app/store/cartSlice";
-import { Product } from "@/app/store/product"; // Make sure this matches your actual path
+import { Product } from "@/app/store/product";
+import axios from "axios";
 
 const Page = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const [products, setProducts] = useState<Product[]>([]);
 
   const user = useSelector((state: RootState) => state.auth.user);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -23,6 +26,19 @@ const Page = () => {
       router.replace("/login");
     }
   }, [user, router]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/products"); 
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   if (!user) return null;
 
@@ -41,8 +57,8 @@ const Page = () => {
   return (
     <main className="p-8 -mt-4">
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-        {ProductList.products.map((product) => (
-          <div key={product.slug}>
+        {products.map((product) => (
+          <div key={product._id}>
             <div className="relative w-full h-[300px] mb-4">
               <Image
                 src={product.images[0]}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -38,22 +39,47 @@ const AdminProducts = () => {
   }, []);
 
   return (
-    <div className="p-8">
-      <h2 className="text-xl font-bold mb-4">Manage Products</h2>
-      <a href="/admin/products/create" className="bg-green-500 text-white px-4 py-2 rounded">+ Add Product</a>
-      <ul className="mt-6 space-y-2">
-        {products.map((product) => (
-          <li key={product._id} className="flex justify-between bg-gray-100 p-4 rounded">
-            <span>{product.name} - ${product.price} - Stock: {product.stock}</span>
-            <button
-              className="bg-red-500 text-white px-3 py-1 rounded"
-              onClick={() => deleteProduct(product._id)}
+    <div className="p-8 max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Manage Products</h2>
+        <a
+          href="/admin/products/create"
+          className="bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2 rounded-md transition-colors"
+        >
+          + Add Product
+        </a>
+      </div>
+
+      {products.length === 0 ? (
+        <p className="text-gray-500">No products available.</p>
+      ) : (
+        <ul className="space-y-4">
+          {products.map((product) => (
+            <li
+              key={product._id}
+              className="bg-white shadow-sm rounded-lg p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between"
             >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+              <div className="text-gray-800 mb-3 sm:mb-0">
+                <span className="font-semibold">{product.name}</span> — ${product.price} — Stock: {product.stock}
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href={`/admin/products/edit/${product._id}`}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition-colors"
+                >
+                  Edit
+                </a>
+                <button
+                  onClick={() => deleteProduct(product._id)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
