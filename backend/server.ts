@@ -3,16 +3,20 @@ dotenv.config(); // ✅ must come first
 
 
 
-
-
 import express from 'express';
+
+
 import mongoose from 'mongoose';
+
 
 import cors from 'cors';
 import protectedRoutes from './routes/protected';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
+
+import bannerRoutes from './routes/bannerRoutes';
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', protectedRoutes);
 
+app.use('/api/banners', bannerRoutes);
 // Routes
 app.use('/api/auth', authRoutes);
 

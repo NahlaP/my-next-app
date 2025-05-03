@@ -1,39 +1,46 @@
+
 // import express from 'express';
-
-// import { verifyToken } from '../middleware/authMiddleware';
-
-
 // import {
 //   createProduct,
 //   getProducts,
-//   getProductBySlug,
+//   getProductById,
 //   updateProduct,
-//   deleteProduct
+//   deleteProduct,
 // } from '../controllers/productController';
+// import { upload } from '../utils/upload'; // adjust path
 
 // const router = express.Router();
 
-// router.post('/',verifyToken, createProduct);
-// router.get('/',verifyToken, getProducts);
-// router.get('/:slug',verifyToken, getProductBySlug);
-// router.put('/:id',verifyToken, updateProduct);
-// router.delete('/:id',verifyToken, deleteProduct);
+// // Upload multiple images for create and update (name="images")
+// router.post('/', upload.array('images', 5), createProduct);
+// router.get('/', getProducts);
+// router.get('/:id', getProductById);
+// router.put('/:id', upload.array('images', 5), updateProduct);
+// router.delete('/:id', deleteProduct);
 
 // export default router;
-// backend/routes/productRoutes.ts
 import express from 'express';
-import Product from '../models/Product';
+import {
+  createProduct,
+  getProducts,
+  getProductById,
+  getProductBySlug,
+  updateProduct,
+  deleteProduct,
+} from '../controllers/productController';
+import { upload } from '../utils/upload';
 
 const router = express.Router();
 
-// GET /api/products
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch {
-    res.status(500).json({ message: 'Failed to fetch products' });
-  }
-});
+router.post('/', upload.array('images', 5), createProduct);
+router.get('/', getProducts);
+
+// Important: define this before /:id
+router.get('/slug/:slug', getProductBySlug);
+
+router.get('/:id', getProductById); // <== add this back
+
+router.put('/:id', upload.array('images', 5), updateProduct);
+router.delete('/:id', deleteProduct);
 
 export default router;

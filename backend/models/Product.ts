@@ -1,101 +1,57 @@
+
 // import mongoose from 'mongoose';
 
-// const productSchema = new mongoose.Schema({
-//   name: { type: String, required: true },
-//   slug: { type: String, required: true, unique: true },
-//   category: { type: String },
-//   description: { type: String },
-//   images: [String],
-//   price: { type: Number, required: true },
-//   brand: { type: String },
-//   rating: { type: Number, default: 0 },
-//   stock: { type: Number, default: 0 },
-//   isFeatured: { type: Boolean, default: false }
-// }, { timestamps: true });
-
-// export default mongoose.model('Product', productSchema);
-// import mongoose, { Schema, Document } from "mongoose";
-
-// export interface IProduct extends Document {
-//   name: string;
-//   slug: string;
-//   category: string;
-//   brand: string;
-//   description: string;
-//   price: number;
-//   stock: number;
-//   images: string[];
-//   isFeatured: boolean;
-// }
-
-// const ProductSchema: Schema = new Schema<IProduct>(
+// const productSchema = new mongoose.Schema(
 //   {
-//     name: {
-//       type: String,
-//       required: true,
-//       trim: true,
-//     },
-//     slug: {
-//       type: String,
-//       required: true,
-//       unique: true,
-//       lowercase: true,
-//       trim: true,
-//     },
-//     category: {
-//       type: String,
-//       required: true,
-//     },
-//     brand: {
-//       type: String,
-//       required: true,
-//     },
-//     description: {
-//       type: String,
-//       required: true,
-//     },
-//     price: {
-//       type: Number,
-//       required: true,
-//     },
-//     stock: {
-//       type: Number,
-//       required: true,
-//     },
-//     images: {
-//       type: [String],
-//       required: true,
-//     },
-//     isFeatured: {
-//       type: Boolean,
-//       default: false,
-//     },
+//     name: { type: String, required: true },
+//     slug: { type: String, unique: true, required: true },
+//     category: { type: String, required: true },
+//     description: { type: String, required: true },
+//     images: [{ type: String, required: true }], // ✅ Use "images" instead of "image"
+//     price: { type: Number, required: true },
+//     brand: { type: String, required: true },
+//     rating: { type: Number, required: true },
+//     numReviews: { type: Number, required: true },
+//     stock: { type: Number, required: true },
+//     isFeatured: { type: Boolean, default: false },
+//     banner: { type: String, default: null },
 //   },
 //   { timestamps: true }
 // );
 
-// const Product = mongoose.model<IProduct>("Product", ProductSchema);
-
+// const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
 // export default Product;
 import mongoose from 'mongoose';
 
+// Define the schema for the Product model
 const productSchema = new mongoose.Schema(
   {
-    name: String,
-    slug: { type: String, unique: true },
-    category: String,
-    description: String,
-    images: [String],
-    price: Number,
-    brand: String,
-    rating: Number,
-    numReviews: Number,
-    stock: Number,
-    isFeatured: Boolean,
-    banner: String,
+    name: { type: String, required: true },
+    slug: { type: String, unique: true, required: true },
+    category: { type: String, required: true },
+    description: { type: String, required: true },
+    images: [{ type: String, required: true }], // Images as an array of strings
+    price: { type: Number, required: true },
+    brand: { type: String, required: true },
+    rating: { type: Number, required: true },
+    numReviews: { type: Number, required: true },
+    stock: { type: Number, required: true },
+    isFeatured: { type: Boolean, default: false },
+    banner: { type: String, default: null },
   },
   { timestamps: true }
 );
 
+// Automatically generate a slug before saving if it's not already set
+productSchema.pre('save', function (next) {
+  if (!this.slug) {
+    // Create a slug from the name, replacing spaces with hyphens and converting to lowercase
+    this.slug = this.name.toLowerCase().replace(/\s+/g, '-');
+  }
+  next();
+});
+
+// Define the Product model
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
+
 export default Product;
