@@ -30,7 +30,7 @@ export default function CheckoutPage() {
         <h1 className="text-3xl font-bold text-center mb-8">Checkout</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* Full Name */}
+      
           <div className="flex flex-col">
             <label htmlFor="name" className="text-sm font-semibold mb-2">Full Name</label>
             <input
@@ -44,7 +44,7 @@ export default function CheckoutPage() {
             />
           </div>
 
-          {/* Shipping Address */}
+        
           <div className="flex flex-col">
             <label htmlFor="address" className="text-sm font-semibold mb-2">Shipping Address</label>
             <input
@@ -58,12 +58,12 @@ export default function CheckoutPage() {
             />
           </div>
 
-          {/* Card Number */}
+     
           <div className="flex flex-col">
             <label htmlFor="cardNumber" className="text-sm font-semibold mb-2">Card Number</label>
             <input
               id="cardNumber"
-              type="password"  // 👈 hide numbers for security
+              type="password" 
               placeholder="•••• •••• •••• ••••"
               value={cardNumber}
               onChange={(e) => setCardNumber(e.target.value)}
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
             />
           </div>
 
-          {/* Pay Now Button */}
+        
           <button
             type="submit"
             className={`bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}

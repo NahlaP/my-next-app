@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([
-    // Example items, replace with dynamic data
+   
     { id: 1, name: "Product 1", price: 20, quantity: 1 },
     { id: 2, name: "Product 2", price: 15, quantity: 2 },
   ]);

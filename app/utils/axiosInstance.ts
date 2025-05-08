@@ -1,4 +1,4 @@
-// utils/axiosInstance.ts
+
 import axios from 'axios';
 
 const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
