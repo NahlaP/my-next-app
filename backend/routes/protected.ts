@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from '../middleware/authMiddleware';  // Updated path
+import { verifyToken } from '../middleware/authMiddleware';  
 
 const router = express.Router();
 

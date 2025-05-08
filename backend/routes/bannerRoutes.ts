@@ -1,4 +1,4 @@
-// backend/routes/bannerRoutes.ts
+
 
 import express from 'express';
 import Banner from '../models/Banner';

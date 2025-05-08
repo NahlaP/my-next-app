@@ -1,4 +1,4 @@
-// backend/data/sampleBanners.ts
+
 
 export const sampleBanners = [
     {

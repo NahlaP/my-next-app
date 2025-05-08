@@ -1,4 +1,4 @@
-// backend/models/Banner.ts
+
 import mongoose from 'mongoose';
 
 const bannerSchema = new mongoose.Schema({

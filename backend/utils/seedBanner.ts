@@ -1,4 +1,4 @@
-// backend/seeder/seedBanners.ts
+
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -18,7 +18,7 @@ const seedBanners = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('✅ Connected to MongoDB');
 
-    await Banner.deleteMany(); // Clear existing banners
+    await Banner.deleteMany(); 
     console.log('🧹 Old banners removed');
 
     await Banner.insertMany(sampleBanners);
