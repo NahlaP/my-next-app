@@ -116,14 +116,9 @@
 
 
 
-
-
-
-
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import {
@@ -137,6 +132,7 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -144,21 +140,17 @@ const CartPage = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const [loading, setLoading] = useState(false);
 
-  // Redirect to login if no token
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
-
   // Fetch cart items from the server
   useEffect(() => {
     const fetchCart = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+          toast.error("Please log in to access your cart.");
+          router.push("/login");
+          return;
+        }
 
         const response = await axios.get("http://localhost:5000/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
@@ -166,9 +158,9 @@ const CartPage = () => {
 
         dispatch(setCartFromServer(response.data.items));
       } catch (error: unknown) {
-        const isAuthError =
-          axios.isAxiosError(error) && [401, 403].includes(error.response?.status ?? 0);
+        const isAuthError = axios.isAxiosError(error) && [401, 403].includes(error.response?.status ?? 0);
 
+        // Suppress error toast in expected non-critical cases
         if (!isAuthError && axios.isAxiosError(error) && !error.config?.url?.includes("/api/cart")) {
           toast.error("Failed to fetch cart items.");
         }
@@ -178,7 +170,7 @@ const CartPage = () => {
     };
 
     fetchCart();
-  }, [dispatch]);
+  }, [dispatch, router]);
 
   const handleIncrease = (slug: string) => dispatch(increaseQuantity(slug));
   const handleDecrease = (slug: string) => dispatch(decreaseQuantity(slug));
