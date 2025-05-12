@@ -1,8 +1,61 @@
+// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+// interface AuthState {
+//   isAuthenticated: boolean;
+//   user: { name: string; email: string; pin?: string; isAdmin?: boolean } | null;
+// }
+
+// const initialState: AuthState = {
+//   isAuthenticated: false,
+//   user: null,
+// };
+
+// const authSlice = createSlice({
+//   name: 'auth',
+//   initialState,
+//   reducers: {
+//     signup(state, action: PayloadAction<{ name: string; email: string; password: string }>) {
+//       state.user = action.payload;
+//       state.isAuthenticated = true;
+//     },
+//     loginSuccess(
+//       state,
+//       action: PayloadAction<{ name: string; email: string; pin?: string; isAdmin?: boolean }>
+//     ) {
+//       state.isAuthenticated = true;
+//       state.user = {
+//         name: action.payload.name,
+//         email: action.payload.email,
+//         pin: action.payload.pin,
+//         isAdmin: action.payload.isAdmin,
+//       };
+//       localStorage.setItem('token', action.payload.email); 
+//       localStorage.setItem('user', JSON.stringify(action.payload));
+//     },
+//     logout(state) {
+//       state.isAuthenticated = false;
+//       state.user = null;
+//       localStorage.removeItem('token');
+//       localStorage.removeItem('user');
+//     },
+//   },
+// });
+
+// export const { signup, loginSuccess, logout } = authSlice.actions;
+// export default authSlice.reducer;
+
+// store/authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
   isAuthenticated: boolean;
-  user: { name: string; email: string; pin?: string; isAdmin?: boolean } | null;
+  user: {
+    name: string;
+    email: string;
+    pin?: string;
+    isAdmin?: boolean;
+    token?: string; // ✅ Add token here
+  } | null;
 }
 
 const initialState: AuthState = {
@@ -20,17 +73,24 @@ const authSlice = createSlice({
     },
     loginSuccess(
       state,
-      action: PayloadAction<{ name: string; email: string; pin?: string; isAdmin?: boolean }>
+      action: PayloadAction<{
+        name: string;
+        email: string;
+        isAdmin?: boolean;
+        pin?: string;
+        token: string; // ✅ Accept token
+      }>
     ) {
       state.isAuthenticated = true;
       state.user = {
         name: action.payload.name,
         email: action.payload.email,
-        pin: action.payload.pin,
         isAdmin: action.payload.isAdmin,
+        pin: action.payload.pin,
+        token: action.payload.token, // ✅ Store token in Redux
       };
-      localStorage.setItem('token', action.payload.email); // Or actual token if available
-      localStorage.setItem('user', JSON.stringify(action.payload));
+      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('user', JSON.stringify(state.user));
     },
     logout(state) {
       state.isAuthenticated = false;

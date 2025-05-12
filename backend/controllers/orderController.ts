@@ -1,32 +1,4 @@
-// // controllers/orderController.ts
-// import { Request, Response } from 'express';
-// import Order from '../models/Order';
-// import { JwtUserPayload } from '../types';
-
-// export const createOrder = async (req: Request, res: Response) => {
-//   const user = req.user as JwtUserPayload;
-//   const { name, address, cardNumber, items, totalAmount } = req.body;
-
-//   if (!items || items.length === 0) {
-//     return res.status(400).json({ message: 'Cart is empty' });
-//   }
-
-//   try {
-//     const newOrder = await Order.create({
-//       user: user.id,
-//       name,
-//       address,
-//       cardNumber,
-//       items,
-//       totalAmount,
-//     });
-
-//     res.status(201).json({ message: 'Order placed successfully', order: newOrder });
-//   } catch (err) {
-//     console.error('Order creation error:', err);
-//     res.status(500).json({ message: 'Failed to place order' });
-//   }
-// };
+// controllers/orderController.ts
 import { Request, Response } from 'express';
 import Order from '../models/Order';
 import { JwtUserPayload } from '../types';
@@ -40,26 +12,56 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const { name, address, cardNumber, items, totalAmount } = req.body;
+    const {
+      fullName,
+      email,
+      phone,
+      street,
+      city,
+      state,
+      zipCode,
+      cardNumber,
+      expirationDate,
+      cvv,
+      cartItems,
+    } = req.body;
 
-    if (!name || !address || !cardNumber || !items || items.length === 0 || !totalAmount) {
-      res.status(400).json({ message: 'Missing required fields' });
+    if (!cartItems || cartItems.length === 0) {
+      res.status(400).json({ message: 'Cart is empty' });
       return;
     }
 
     const newOrder = await Order.create({
       user: user.id,
-      name,
-      address,
+      fullName,
+      email,
+      phone,
+      street,
+      city,
+      state,
+      zipCode,
       cardNumber,
-      items,
-      totalAmount,
+      expirationDate,
+      cvv,
+      cartItems,
     });
 
     res.status(201).json({ message: 'Order placed successfully', order: newOrder });
+  } catch (error) {
+    console.error('Order creation error:', error);
+    res.status(500).json({ message: 'Failed to place order', error });
+  }
+};
 
-  } catch (err) {
-    console.error('Order creation error:', err);
-    res.status(500).json({ message: 'Failed to place order', error: err });
+export const getUserOrders = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = req.user as JwtUserPayload;
+
+    const orders = await Order.find({ user: user.id }).sort({ createdAt: -1 });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Failed to fetch orders' });
   }
 };

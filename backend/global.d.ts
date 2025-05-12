@@ -14,12 +14,12 @@
 
 
 // export {};
-import { JwtUserPayload } from './types'; // adjust if needed
+// import { JwtUserPayload } from './types'; // adjust if needed
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtUserPayload;
-    }
-  }
-}
+// declare global {
+//   namespace Express {
+//     interface Request {
+//       user?: JwtUserPayload;
+//     }
+//   }
+// }

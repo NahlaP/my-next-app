@@ -36,7 +36,7 @@ console.log("Type of isAdmin:", typeof user.isAdmin, "Value:", user.isAdmin);
       console.log("Logged-in user:", user); 
     
       localStorage.setItem("token", token);
-      dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin }));
+      dispatch(loginSuccess({ name: user.name, email: user.email, isAdmin: user.isAdmin,token}));
       toast.success("Login successful!");
     
   

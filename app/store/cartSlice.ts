@@ -2,15 +2,26 @@
 
 
 
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// interface CartItem {
+
+
+// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+// import {
+//   fetchCartFromServer,
+//   addCartItemToServer,
+//   updateCartItemQuantity,
+//   deleteCartItem,
+// } from './cartActions'; // make sure the path is correct
+
+// export interface CartItem {
+//   _id: string;
+//   productId: string;
 //   slug: string;
 //   name: string;
-//   price: number;
-//   brand: string;
-//   images: string[];
 //   quantity: number;
+//   price: number;
+//   images: string[];
+//   brand: string;
 // }
 
 // interface CartState {
@@ -22,66 +33,72 @@
 // };
 
 // const cartSlice = createSlice({
-//   name: "cart",
+//   name: 'cart',
 //   initialState,
 //   reducers: {
-//     setCartFromServer(state, action: PayloadAction<CartItem[]>) {
-//       state.items = action.payload;
-//     },
-//     addToCart(state, action: PayloadAction<CartItem>) {
-//       const existingItem = state.items.find(item => item.slug === action.payload.slug);
+//     addToCart: (state, action: PayloadAction<CartItem>) => {
+//       const existingItem = state.items.find(item => item._id === action.payload._id);
 //       if (existingItem) {
-//         existingItem.quantity += 1;
+//         existingItem.quantity += action.payload.quantity;
 //       } else {
 //         state.items.push(action.payload);
 //       }
 //     },
-//     increaseQuantity(state, action: PayloadAction<string>) {
-//       const item = state.items.find(item => item.slug === action.payload);
-//       if (item) {
-//         item.quantity += 1;
-//       }
+//     removeFromCart: (state, action: PayloadAction<string>) => {
+//       state.items = state.items.filter(item => item._id !== action.payload);
 //     },
-//     decreaseQuantity(state, action: PayloadAction<string>) {
-//       const item = state.items.find(item => item.slug === action.payload);
-//       if (item && item.quantity > 1) {
-//         item.quantity -= 1;
-//       }
+//     clearCart: (state) => {
+//       state.items = [];
 //     },
-//     removeFromCart(state, action: PayloadAction<string>) {
-//       state.items = state.items.filter(item => item.slug !== action.payload);
+//     setCartFromServer: (state, action: PayloadAction<CartItem[]>) => {
+//       state.items = action.payload;
 //     },
+//   },
+//   extraReducers: (builder) => {
+//     builder
+//       .addCase(fetchCartFromServer.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+//         state.items = action.payload;
+//       })
+//       .addCase(addCartItemToServer.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+//         state.items = action.payload;
+//       })
+//       .addCase(updateCartItemQuantity.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+//         state.items = action.payload;
+//       })
+//       .addCase(deleteCartItem.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+//         state.items = action.payload;
+//       });
 //   },
 // });
 
-// export const {
-//   setCartFromServer,
-//   addToCart,
-//   increaseQuantity,
-//   decreaseQuantity,
-//   removeFromCart,
-// } = cartSlice.actions;
-
+// export const { addToCart, removeFromCart, clearCart, setCartFromServer } = cartSlice.actions;
 // export default cartSlice.reducer;
 
 
 
 
 
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  fetchCartFromServer,
+  addCartItemToServer,
+  updateCartItemQuantity,
+  deleteCartItem,
+  clearCartOnServer,
+} from './cartActions';
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface CartItem {
- 
+export interface CartItem {
+  _id: string;
+  productId: string;
   slug: string;
   name: string;
-  price: number;
-  brand: string;
-  images: string[];
   quantity: number;
+  price: number;
+  images: string[];
+  brand: string;
 }
 
-export interface CartState {
+interface CartState {
   items: CartItem[];
 }
 
@@ -90,132 +107,46 @@ const initialState: CartState = {
 };
 
 const cartSlice = createSlice({
-  name: "cart",
+  name: 'cart',
   initialState,
   reducers: {
-    setCartFromServer(state, action: PayloadAction<CartItem[]>) {
-      state.items = action.payload;
-    },
-    addToCart(state, action: PayloadAction<CartItem>) {
-      const existingItem = state.items.find(item => item.slug === action.payload.slug);
+    addToCart: (state, action: PayloadAction<CartItem>) => {
+      const existingItem = state.items.find(item => item._id === action.payload._id);
       if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity += action.payload.quantity;
       } else {
         state.items.push(action.payload);
       }
     },
-    increaseQuantity(state, action: PayloadAction<string>) {
-      const item = state.items.find(item => item.slug === action.payload);
-      if (item) {
-        item.quantity += 1;
-      }
+    removeFromCart: (state, action: PayloadAction<string>) => {
+      state.items = state.items.filter(item => item._id !== action.payload);
     },
-    decreaseQuantity(state, action: PayloadAction<string>) {
-      const item = state.items.find(item => item.slug === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-      }
-    },
-    removeFromCart(state, action: PayloadAction<string>) {
-      state.items = state.items.filter(item => item.slug !== action.payload);
-    },
-    clearCart(state) {
+    clearCart: (state) => {
       state.items = [];
     },
+    setCartFromServer: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCartFromServer.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.items = action.payload;
+      })
+      .addCase(addCartItemToServer.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.items = action.payload;
+      })
+      .addCase(updateCartItemQuantity.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.items = action.payload;
+      })
+      .addCase(deleteCartItem.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.items = action.payload;
+      })
+      .addCase(clearCartOnServer.fulfilled, (state, action: PayloadAction<CartItem[]>) => {
+        state.items = action.payload;
+      });
   },
 });
 
-export const {
-  setCartFromServer,
-  addToCart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-  clearCart, // ✅ Make sure to export this
-} = cartSlice.actions;
-
+export const { addToCart, removeFromCart, clearCart, setCartFromServer } = cartSlice.actions;
 export default cartSlice.reducer;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// interface CartItem {
-//   slug: string;
-//   name: string;
-//   images: string[];
-//   price: number;
-//   brand: string;
-//   quantity: number;
-// }
-
-// interface CartState {
-//   items: CartItem[];
-// }
-
-// const initialState: CartState = {
-//   items: [],
-// };
-
-// const cartSlice = createSlice({
-//   name: "cart",
-//   initialState,
-//   reducers: {
-//     setCartFromServer(state, action: PayloadAction<CartItem[]>) {
-//       state.items = action.payload;
-//     },
-//     addToCart(state, action: PayloadAction<CartItem>) {
-//       const item = state.items.find(i => i.slug === action.payload.slug);
-//       if (item) {
-//         item.quantity += action.payload.quantity;
-//       } else {
-//         state.items.push(action.payload);
-//       }
-//     },
-//     increaseQuantity(state, action: PayloadAction<string>) {
-//       const item = state.items.find(i => i.slug === action.payload);
-//       if (item) {
-//         item.quantity += 1;
-//       }
-//     },
-//     decreaseQuantity(state, action: PayloadAction<string>) {
-//       const item = state.items.find(i => i.slug === action.payload);
-//       if (item && item.quantity > 1) {
-//         item.quantity -= 1;
-//       }
-//     },
-//     removeFromCart(state, action: PayloadAction<string>) {
-//       state.items = state.items.filter(i => i.slug !== action.payload);
-//     },
-
-//     // ✅ Add this clearCart reducer
-//     clearCart(state) {
-//       state.items = [];
-//     },
-//   },
-// });
-
-// export const {
-//   setCartFromServer,
-//   addToCart,
-//   increaseQuantity,
-//   decreaseQuantity,
-//   removeFromCart,
-//   clearCart, // ✅ Export clearCart here
-// } = cartSlice.actions;
-
-// export default cartSlice.reducer;
