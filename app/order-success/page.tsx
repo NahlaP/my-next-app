@@ -1,10 +1,15 @@
 
+
+
+
+
 // "use client";
 
 // import { useEffect, useState } from "react";
 // import { useRouter } from "next/navigation";
 // import { useDispatch } from "react-redux";
-// import { clearCart } from "../store/cartSlice";
+// import { clearCartOnServer } from "../store/cartActions";
+// import type { AppDispatch } from "../store"; 
 
 // interface Order {
 //   _id: string;
@@ -22,7 +27,8 @@
 // export default function OrderSuccessPage() {
 //   const [order, setOrder] = useState<Order | null>(null);
 //   const router = useRouter();
-//   const dispatch = useDispatch();
+
+//   const dispatch = useDispatch<AppDispatch>();
 
 //   useEffect(() => {
 //     const fetchOrder = async () => {
@@ -37,9 +43,9 @@
 //         const latest = data[data.length - 1];
 //         setOrder(latest);
 
-//         // Clear cart after placing order
-//         dispatch(clearCart());
-//         localStorage.removeItem("cart"); // if you also store cart in localStorage
+  
+//         await dispatch(clearCartOnServer());
+//         localStorage.removeItem("cart");
 //       } catch (err) {
 //         console.error("Failed to fetch order", err);
 //       }
@@ -63,8 +69,6 @@
 //           <p>Email: {order.email}</p>
 //           <p>Address: {order.street}, {order.city}, {order.state} - {order.zipCode}</p>
 //           <p>Phone: {order.phone}</p>
-
-//           {/* Security: Do not show full card details */}
 //           <p className="text-gray-500 mt-2 italic">Your payment was processed securely.</p>
 
 //           <button
@@ -85,15 +89,13 @@
 
 
 
-
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { clearCartOnServer } from "../store/cartActions";
-import type { AppDispatch } from "../store"; 
+import type { AppDispatch } from "../store";
 
 interface Order {
   _id: string;
@@ -120,14 +122,13 @@ export default function OrderSuccessPage() {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:5000/api/orders", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         const latest = data[data.length - 1];
         setOrder(latest);
 
-  
         await dispatch(clearCartOnServer());
         localStorage.removeItem("cart");
       } catch (err) {

@@ -9,11 +9,7 @@ const GlobalAuthChecker = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  // useEffect(() => {
-  //   if (!isAuthenticated && user) {
-  //     dispatch(loginSuccess({ name: user.name, email: user.email }));
-  //   }
-  // }, [isAuthenticated, user, dispatch]);
+
 useEffect(() => {
   if (!isAuthenticated && user && user.token) {
     dispatch(

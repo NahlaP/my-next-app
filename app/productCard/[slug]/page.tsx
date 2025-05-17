@@ -1,14 +1,17 @@
 
+
+
+
 // "use client";
 
 // import { useEffect, useState } from "react";
 // import { useParams, useRouter } from "next/navigation";
 // import { toast } from "sonner";
-// import { useDispatch, useSelector } from "react-redux";
+// import {  useSelector } from "react-redux";
 // import Image from "next/image";
 
-// import { addToCart } from "@/app/store/cartSlice";
-// import { RootState, AppDispatch } from "@/app/store/store";
+// // import { addToCart } from "@/app/store/cartSlice";
+// import { RootState } from "@/app/store/store";
 
 // interface Product {
 //   _id: string;
@@ -37,9 +40,8 @@
 // export default function ProductCard() {
 //   const { slug } = useParams();
 //   const router = useRouter();
-//   const dispatch = useDispatch<AppDispatch>();
-
-//   const cartItems = useSelector((state: RootState) => state.cart.items);
+//   // const dispatch = useDispatch<AppDispatch>();
+//   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 //   const [product, setProduct] = useState<Product | null>(null);
 //   const [reviews, setReviews] = useState<Review[]>([]);
 //   const [loading, setLoading] = useState(true);
@@ -47,6 +49,9 @@
 //   // Review form state
 //   const [rating, setRating] = useState(5);
 //   const [comment, setComment] = useState("");
+
+//   // Check if the user is logged in
+//   const isLoggedIn = !!localStorage.getItem("token");
 
 //   useEffect(() => {
 //     const fetchProductAndReviews = async () => {
@@ -79,28 +84,48 @@
 //     if (slug) fetchProductAndReviews();
 //   }, [slug]);
 
-//   const handleAddToCart = () => {
-//     if (!product) return;
 
-//     const existingProduct = cartItems.find((item) => item.slug === product.slug);
 
-//     dispatch(addToCart({ ...product, quantity: 1, productId: product._id }));
 
-//     toast.success(
-//       existingProduct
-//         ? `${product.name} quantity increased! 🔥`
-//         : <div className="flex items-center gap-4">
-//             <div className="relative w-16 h-16">
-//               <Image src={product.images[0]} alt={product.name} fill className="object-contain rounded" />
-//             </div>
-//             <div className="flex flex-col">
-//               <p className="font-semibold">{product.name} added to cart! 🛒</p>
-//             </div>
-//           </div>,
-//       { duration: 2000 }
-//     );
+//  const handleAddToCart = async (product: Product) => {
+//     if (!isAuthenticated || !user?.token) {
+//       toast.error("Please log in to add items to your cart.");
+//       router.push("/login");
+//       return;
+//     }
 
-//     router.push("/cart");
+//     try {
+//       const res = await fetch("http://localhost:5000/api/cart/add", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${user.token}`,
+//         },
+//         body: JSON.stringify({
+//           productId: product._id,
+//           name: product.name,
+//           slug: product.slug,
+//           price: product.price,
+//           brand: product.brand,
+//           images: product.images,
+//           quantity: 1,
+//         }),
+//       });
+
+//       if (!res.ok) {
+//         const errorData = await res.json();
+//         throw new Error(errorData.message || "Failed to add to cart");
+//       }
+
+//       toast.success(`${product.name} added to cart! 🛒`);
+//       router.push("/cart");
+//     } catch (error: unknown) {
+//       if (error instanceof Error) {
+//         toast.error(`Error adding product to cart: ${error.message}`);
+//       } else {
+//         toast.error("Error adding product to cart: Unknown error");
+//       }
+//     }
 //   };
 
 //   const submitReview = async (e: React.FormEvent) => {
@@ -109,7 +134,7 @@
 //     if (!product) return;
 
 //     try {
-//       const token = localStorage.getItem("token"); 
+//       const token = localStorage.getItem("token");
 
 //       const res = await fetch("http://localhost:5000/api/reviews/submit", {
 //         method: "POST",
@@ -162,80 +187,84 @@
 //           <div className="text-gray-700 mb-4">Stock: {product.stock}</div>
 
 //           <button
-//             onClick={handleAddToCart}
-//             className="bg-red-800 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-lg transition duration-300"
+//             onClick={() => handleAddToCart(product)}
+//             className="bg-red-800 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300"
 //           >
 //             Add to Cart
 //           </button>
 //         </div>
 //       </div>
 
-//       {/* Reviews */}
-//       <div className="mt-12">
-//         <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
-//         {reviews.length === 0 ? (
-//           <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
-//         ) : (
-//           reviews.map((review) => (
-//             <div key={review._id} className="mb-4 border-b pb-4">
-//               <div className="flex justify-between items-center">
-//                 <p className="font-semibold">{review.user?.name || "Anonymous"}</p>
-//                 {review.sentiment && (
-//                   <span className={`text-xs px-2 py-1 rounded ${
-//                     review.sentiment === 'POSITIVE'
-//                       ? 'bg-green-100 text-green-700'
-//                       : review.sentiment === 'NEGATIVE'
-//                       ? 'bg-red-100 text-red-700'
-//                       : 'bg-gray-100 text-gray-700'
-//                   }`}>
-//                     {review.sentiment}
-//                   </span>
-//                 )}
+//       {/* Reviews Section */}
+//       {isLoggedIn && (
+//         <div className="mt-12">
+//           <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+//           {reviews.length === 0 ? (
+//             <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
+//           ) : (
+//             reviews.map((review) => (
+//               <div key={review._id} className="mb-4 border-b pb-4">
+//                 <div className="flex justify-between items-center">
+//                   <p className="font-semibold">{review.user?.name || "Anonymous"}</p>
+//                   {review.sentiment && (
+//                     <span className={`text-xs px-2 py-1 rounded ${
+//                       review.sentiment === 'POSITIVE'
+//                         ? 'bg-green-100 text-green-700'
+//                         : review.sentiment === 'NEGATIVE'
+//                         ? 'bg-red-100 text-red-700'
+//                         : 'bg-gray-100 text-gray-700'
+//                     }`}>
+//                       {review.sentiment}
+//                     </span>
+//                   )}
+//                 </div>
+//                 <p className="text-yellow-600">
+//                   {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
+//                 </p>
+//                 <p>{review.comment}</p>
 //               </div>
-//               <p className="text-yellow-600">
-//                 {"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}
-//               </p>
-//               <p>{review.comment}</p>
-//             </div>
-//           ))
-//         )}
-//       </div>
+//             ))
+//           )}
+//         </div>
+//       )}
 
-//       <div className="mt-12">
-//         <h2 className="text-xl font-bold mb-4">Write a Review</h2>
-//         <form onSubmit={submitReview} className="space-y-4 max-w-lg">
-//           <div>
-//             <label className="block mb-1 font-semibold">Rating</label>
-//             <select
-//               value={rating}
-//               onChange={(e) => setRating(Number(e.target.value))}
-//               className="w-full p-2 border rounded"
+//       {isLoggedIn && (
+//         <div className="mt-12">
+//           <h2 className="text-xl font-bold mb-4">Write a Review</h2>
+//           <form onSubmit={submitReview} className="space-y-4 max-w-lg">
+//             <div>
+//               <label className="block mb-1 font-semibold">Rating</label>
+//               <select
+//                 value={rating}
+//                 onChange={(e) => setRating(Number(e.target.value))}
+//                 className="w-full p-2 border rounded"
+//               >
+//                 {[5, 4, 3, 2, 1].map((r) => (
+//                   <option key={r} value={r}>
+//                     {r} Star{r > 1 ? "s" : ""}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+//             <div>
+//               <label className="block mb-1 font-semibold">Comment</label>
+//               <textarea
+//                 value={comment}
+//                 onChange={(e) => setComment(e.target.value)}
+//                 className="w-full p-2 border rounded"
+//                 rows={4}
+//                 placeholder="Write your review here..."
+//               />
+//             </div>
+//             <button
+//               type="submit"
+//               className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded shadow"
 //             >
-//               {[5, 4, 3, 2, 1].map((r) => (
-//                 <option key={r} value={r}>
-//                   {r} Star{r > 1 ? "s" : ""}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div>
-//             <label className="block mb-1 font-semibold">Comment</label>
-//             <textarea
-//               value={comment}
-//               onChange={(e) => setComment(e.target.value)}
-//               className="w-full p-2 border rounded"
-//               rows={4}
-//               placeholder="Write your review here..."
-//             />
-//           </div>
-//           <button
-//             type="submit"
-//             className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded shadow"
-//           >
-//             Submit Review
-//           </button>
-//         </form>
-//       </div>
+//               Submit Review
+//             </button>
+//           </form>
+//         </div>
+//       )}
 //     </div>
 //   );
 // }
@@ -250,10 +279,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Image from "next/image";
-
-// import { addToCart } from "@/app/store/cartSlice";
 import { RootState } from "@/app/store/store";
 
 interface Product {
@@ -280,20 +307,19 @@ interface Review {
   sentiment?: string;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
 export default function ProductCard() {
   const { slug } = useParams();
   const router = useRouter();
-  // const dispatch = useDispatch<AppDispatch>();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Review form state
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
 
-  // Check if the user is logged in
   const isLoggedIn = !!localStorage.getItem("token");
 
   useEffect(() => {
@@ -301,7 +327,7 @@ export default function ProductCard() {
       try {
         const token = localStorage.getItem("token");
 
-        const productRes = await fetch(`http://localhost:5000/api/products/slug/${slug}`, {
+        const productRes = await fetch(`${API_BASE}/api/products/slug/${slug}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -309,9 +335,9 @@ export default function ProductCard() {
         const productData = await productRes.json();
         setProduct(productData);
 
-        const reviewRes = await fetch(`http://localhost:5000/api/reviews/${productData._id}`, {
+        const reviewRes = await fetch(`${API_BASE}/api/reviews/${productData._id}`, {
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         });
         const reviewData = await reviewRes.json();
@@ -327,10 +353,7 @@ export default function ProductCard() {
     if (slug) fetchProductAndReviews();
   }, [slug]);
 
-
-
-
- const handleAddToCart = async (product: Product) => {
+  const handleAddToCart = async (product: Product) => {
     if (!isAuthenticated || !user?.token) {
       toast.error("Please log in to add items to your cart.");
       router.push("/login");
@@ -338,7 +361,7 @@ export default function ProductCard() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/cart/add", {
+      const res = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -379,11 +402,11 @@ export default function ProductCard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/reviews/submit", {
+      const res = await fetch(`${API_BASE}/api/reviews/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           productId: product._id,
@@ -450,13 +473,15 @@ export default function ProductCard() {
                 <div className="flex justify-between items-center">
                   <p className="font-semibold">{review.user?.name || "Anonymous"}</p>
                   {review.sentiment && (
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      review.sentiment === 'POSITIVE'
-                        ? 'bg-green-100 text-green-700'
-                        : review.sentiment === 'NEGATIVE'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        review.sentiment === "POSITIVE"
+                          ? "bg-green-100 text-green-700"
+                          : review.sentiment === "NEGATIVE"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
                       {review.sentiment}
                     </span>
                   )}
@@ -511,5 +536,3 @@ export default function ProductCard() {
     </div>
   );
 }
-
-
