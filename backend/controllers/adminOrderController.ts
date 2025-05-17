@@ -1,8 +1,8 @@
-// controllers/adminOrderController.ts
+
 import { Request, Response } from 'express';
 import Order from '../models/Order';
 
-// GET all orders
+
 export const getAllOrders = async (req: Request, res: Response): Promise<void> => {
   try {
     const orders = await Order.find().populate('user', 'name email');
@@ -12,7 +12,6 @@ export const getAllOrders = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// GET order by ID
 export const getOrderById = async (req: Request, res: Response): Promise<void> => {
   try {
     const order = await Order.findById(req.params.id).populate('user', 'name email');
@@ -26,7 +25,6 @@ export const getOrderById = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// PUT update order
 export const updateOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderStatus, paymentStatus } = req.body;
@@ -47,7 +45,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
   }
 };
 
-// DELETE order
+
 export const deleteOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);

@@ -2,7 +2,7 @@
 
 
 
-// models/CartItem.ts
+
 import { Schema, model } from 'mongoose';
 
 const CartItemSchema = new Schema({

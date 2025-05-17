@@ -49,11 +49,10 @@ export const deleteCartItem = createAsyncThunk("cart/deleteItem", async (id: str
   return response.data.items;
 });
 
-// ✅ Clear the server-side cart
 export const clearCartOnServer = createAsyncThunk("cart/clear", async () => {
   const token = getToken();
   const res = await axios.delete("http://localhost:5000/api/cart/clear", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.data.items; // Should return empty array
+  return res.data.items; 
 });

@@ -8,7 +8,7 @@ export interface AuthState {
     email: string;
     pin?: string;
     isAdmin?: boolean;
-    token?: string; // ✅ Add token here
+    token?: string;
   } | null;
 }
 
@@ -33,7 +33,7 @@ const authSlice = createSlice({
         email: string;
         isAdmin?: boolean;
         pin?: string;
-        token: string; // ✅ Accept token
+        token: string;
       }>
     ) {
       state.isAuthenticated = true;
@@ -42,7 +42,7 @@ const authSlice = createSlice({
         email: action.payload.email,
         isAdmin: action.payload.isAdmin,
         pin: action.payload.pin,
-        token: action.payload.token, // ✅ Store token in Redux
+        token: action.payload.token, 
       };
       localStorage.setItem('token', action.payload.token);
       localStorage.setItem('user', JSON.stringify(state.user));

@@ -11,7 +11,6 @@ interface JwtUserPayload {
   exp?: number;
 }
 
-// ✅ Get all cart items for a user
 export const getUserCart = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req.user as JwtUserPayload).id;
@@ -22,7 +21,6 @@ export const getUserCart = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// ✅ Add item to cart (or increase quantity if it already exists)
 export const addToCart = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req.user as JwtUserPayload).id;
@@ -46,7 +44,7 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
       });
     }
 
-    // ✅ Return updated cart
+    
     const items = await CartItem.find({ userId });
     res.status(200).json({ items });
   } catch (error) {
@@ -55,7 +53,6 @@ export const addToCart = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// ✅ Update quantity (increase/decrease)
 export const updateCartItem = async (req: Request, res: Response): Promise<void> => {
   try {
     const itemId = req.params.id;
@@ -83,7 +80,7 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
 
     await cartItem.save();
 
-    // ✅ Return updated cart
+ 
     const userId = (req.user as JwtUserPayload).id;
     const items = await CartItem.find({ userId });
     res.status(200).json({ items });
@@ -93,13 +90,13 @@ export const updateCartItem = async (req: Request, res: Response): Promise<void>
   }
 };
 
-// ✅ Delete item
+
 export const deleteCartItem = async (req: Request, res: Response): Promise<void> => {
   try {
     const itemId = req.params.id;
     await CartItem.findByIdAndDelete(itemId);
 
-    // ✅ Return updated cart
+ 
     const userId = (req.user as JwtUserPayload).id;
     const items = await CartItem.find({ userId });
     res.status(200).json({ items });
@@ -112,11 +109,10 @@ export const deleteCartItem = async (req: Request, res: Response): Promise<void>
 export const clearUserCart = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req.user as JwtUserPayload).id;
-    
-    // This line clears the user's cart
+  
     await CartItem.deleteMany({ userId });
 
-    // Respond with an empty cart
+ 
     res.status(200).json({ items: [] });
   } catch (error) {
     console.error("Error in clearUserCart:", error);

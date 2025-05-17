@@ -1,4 +1,4 @@
-// types/index.ts
+
 
 export interface OrderItem {
   _id: string;
@@ -16,7 +16,6 @@ export interface User {
   role: string;
 }
 
-// types/index.ts
 export interface CartItem {
   _id: string;
   name: string;

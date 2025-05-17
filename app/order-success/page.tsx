@@ -93,7 +93,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { clearCartOnServer } from "../store/cartActions";
-import type { AppDispatch } from "../store"; // make sure the path is correct
+import type { AppDispatch } from "../store"; 
 
 interface Order {
   _id: string;
@@ -112,7 +112,6 @@ export default function OrderSuccessPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const router = useRouter();
 
-  // ✅ Properly typed dispatch to support async thunks
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -128,7 +127,7 @@ export default function OrderSuccessPage() {
         const latest = data[data.length - 1];
         setOrder(latest);
 
-        // ✅ Clear cart from server and local storage
+  
         await dispatch(clearCartOnServer());
         localStorage.removeItem("cart");
       } catch (err) {
