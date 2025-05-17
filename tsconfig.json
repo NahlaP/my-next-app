@@ -1,3 +1,38 @@
+// {
+//   "compilerOptions": {
+//     "target": "ES2017",
+//     "lib": ["dom", "dom.iterable", "esnext"],
+//     "allowJs": true,
+//     "skipLibCheck": true,
+//     "strict": true,
+//     "noEmit": true,
+//     "esModuleInterop": true,
+//     "module": "esnext",
+//     "moduleResolution": "bundler",
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "jsx": "preserve",
+//     "incremental": true,
+//     "plugins": [
+//       {
+//         "name": "next"
+//       }
+//     ],
+//     "paths": {
+//       "@/*": ["./*"]
+//     }
+//   },
+//   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/productRender.tsx"],
+//   "exclude": ["node_modules"],
+
+//   "target": "ES6",
+// "module": "CommonJS",
+// "outDir": "./dist",
+// "rootDir": "./src",
+// "esModuleInterop": true
+
+// }
+
 {
   "compilerOptions": {
     "target": "ES2017",
@@ -13,22 +48,21 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": ["./*"]
-    }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/components/productRender.tsx"],
-  "exclude": ["node_modules"],
-
-  "target": "ES6",
-"module": "CommonJS",
-"outDir": "./dist",
-"rootDir": "./src",
-"esModuleInterop": true
-
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/components/productRender.tsx"
+  ],
+  "exclude": ["node_modules", "backend"]
 }
