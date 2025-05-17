@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node-dev --respawn server.ts",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn server.ts",
+    "build": "tsc",
     "seed": "ts-node utils/seedProducts.ts",
     "seed:banners": "ts-node utils/seedBanner.ts"
   },
@@ -25,7 +26,6 @@
     "multer-storage-cloudinary": "^4.0.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^3.0.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
