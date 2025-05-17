@@ -250,11 +250,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import Image from "next/image";
 
-import { addToCart } from "@/app/store/cartSlice";
-import { RootState, AppDispatch } from "@/app/store/store";
+// import { addToCart } from "@/app/store/cartSlice";
+import { RootState } from "@/app/store/store";
 
 interface Product {
   _id: string;
@@ -283,9 +283,8 @@ interface Review {
 export default function ProductCard() {
   const { slug } = useParams();
   const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
-
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  // const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -328,28 +327,48 @@ export default function ProductCard() {
     if (slug) fetchProductAndReviews();
   }, [slug]);
 
-  const handleAddToCart = () => {
-    if (!product) return;
 
-    const existingProduct = cartItems.find((item) => item.slug === product.slug);
 
-    dispatch(addToCart({ ...product, quantity: 1, productId: product._id }));
 
-    toast.success(
-      existingProduct
-        ? `${product.name} quantity increased! 🔥`
-        : <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16">
-              <Image src={product.images[0]} alt={product.name} fill className="object-contain rounded" />
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold">{product.name} added to cart! 🛒</p>
-            </div>
-          </div>,
-      { duration: 2000 }
-    );
+ const handleAddToCart = async (product: Product) => {
+    if (!isAuthenticated || !user?.token) {
+      toast.error("Please log in to add items to your cart.");
+      router.push("/login");
+      return;
+    }
 
-    router.push("/cart");
+    try {
+      const res = await fetch("http://localhost:5000/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          productId: product._id,
+          name: product.name,
+          slug: product.slug,
+          price: product.price,
+          brand: product.brand,
+          images: product.images,
+          quantity: 1,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to add to cart");
+      }
+
+      toast.success(`${product.name} added to cart! 🛒`);
+      router.push("/cart");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Error adding product to cart: ${error.message}`);
+      } else {
+        toast.error("Error adding product to cart: Unknown error");
+      }
+    }
   };
 
   const submitReview = async (e: React.FormEvent) => {
@@ -411,8 +430,8 @@ export default function ProductCard() {
           <div className="text-gray-700 mb-4">Stock: {product.stock}</div>
 
           <button
-            onClick={handleAddToCart}
-            className="bg-red-800 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-lg transition duration-300"
+            onClick={() => handleAddToCart(product)}
+            className="bg-red-800 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition duration-300"
           >
             Add to Cart
           </button>
@@ -452,7 +471,6 @@ export default function ProductCard() {
         </div>
       )}
 
-      {/* Review Form (only visible after login) */}
       {isLoggedIn && (
         <div className="mt-12">
           <h2 className="text-xl font-bold mb-4">Write a Review</h2>
@@ -493,3 +511,5 @@ export default function ProductCard() {
     </div>
   );
 }
+
+
